@@ -1,0 +1,45 @@
+syntax = "proto3";
+option go_package = "transport.com/monitoringGrpc";
+
+import "google/protobuf/timestamp.proto";
+
+message ProcessInfo {
+  string name            = 1;
+  double cpuPercent      = 2;
+  float memPercent      = 3;
+  string status          = 4;
+}
+
+message AllInfoRequest {
+  string token                = 1;
+  repeated string processName = 2;
+}
+
+message Error {
+  enum ErrorCode {
+    OK = 0;
+    ERROR = 1;
+    UNKNOWN_REQUEST = 2;
+    UNKNOWN_ID = 3;
+    UNKNOWN_TOKEN = 4;
+  }
+  ErrorCode code = 1;
+}
+
+message AllInfoResponse{
+  oneof response{
+    Error error                     = 1;
+    AllInfoResponseSuccess success  = 2;
+  }
+}
+
+message AllInfoResponseSuccess {
+  double cpuPercent                  = 1;
+  double memPercent                  = 2;
+  double diskPercent                 = 3;
+  uint64 netInfoSent                 = 4;
+  uint64 netInfoRecv                 = 5;
+  repeated uint32 listenPorts        = 6;
+  repeated ProcessInfo processInfo   = 7;
+  google.protobuf.Timestamp time     = 8;
+}
